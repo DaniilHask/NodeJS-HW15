@@ -1,12 +1,14 @@
-// @ts-ignore — Next.js is provided by the app dependency tree
 import type { Request, Response } from 'express';
 import newsService from '../services/news.service.js';
 
 export class NewsController {
   async getPosts(req: Request, res: Response): Promise<void> {
     try {
-      const posts = await newsService.getAllPosts();
-      res.json(posts);
+      const page = req.query.page !== undefined ? Number(req.query.page) : 0;
+      const size = req.query.size !== undefined ? Number(req.query.size) : 10;
+
+      const result = await newsService.getAll({ page, size });
+      res.json(result);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -15,7 +17,7 @@ export class NewsController {
   async getPostById(req: Request, res: Response): Promise<void> {
     try {
       const postId = req.params.id as string;
-      const post = await newsService.getPostById(postId);
+      const post = await newsService.getById(postId);
       
       if (!post) {
         res.status(404).json({ error: 'News not found' });
@@ -34,7 +36,7 @@ export class NewsController {
         res.status(400).json({ error: 'Title and text are required' });
         return;
       }
-      const newPost = await newsService.createPost({ title, text });
+      const newPost = await newsService.create({ title, text });
       res.status(201).json(newPost);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -44,7 +46,7 @@ export class NewsController {
   async updatePost(req: Request, res: Response): Promise<void> {
     try {
       const postId = req.params.id as string;
-      const updatedPost = await newsService.updatePost(postId, req.body);
+      const updatedPost = await newsService.update(postId, req.body);
       
       if (!updatedPost) {
         res.status(404).json({ error: 'News not found' });
@@ -59,7 +61,7 @@ export class NewsController {
   async deletePost(req: Request, res: Response): Promise<void> {
     try {
       const postId = req.params.id as string;
-      const success = await newsService.deletePost(postId);
+      const success = await newsService.delete(postId);
       
       if (!success) {
         res.status(404).json({ error: 'News not found' });
