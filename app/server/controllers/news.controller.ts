@@ -1,8 +1,8 @@
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import newsService from '../services/news.service.js';
 
 export class NewsController {
-  async getPosts(req: Request, res: Response): Promise<void> {
+  async getPosts(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const page = req.query.page !== undefined ? Number(req.query.page) : 0;
       const size = req.query.size !== undefined ? Number(req.query.size) : 10;
@@ -10,13 +10,13 @@ export class NewsController {
       const result = await newsService.getAll({ page, size });
       res.json(result);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      next(error);
     }
   }
 
-  async getPostById(req: Request, res: Response): Promise<void> {
+  async getPostById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const postId = req.params.id as string;
+      const postId = Number(req.params.id);
       const post = await newsService.getById(postId);
       
       if (!post) {
@@ -25,27 +25,22 @@ export class NewsController {
       }
       res.json(post);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      next(error);
     }
   }
 
-  async createPost(req: Request, res: Response): Promise<void> {
+  async createPost(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { title, text } = req.body;
-      if (!title || !text) {
-        res.status(400).json({ error: 'Title and text are required' });
-        return;
-      }
-      const newPost = await newsService.create({ title, text });
+      const newPost = await newsService.create(req.body);
       res.status(201).json(newPost);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      next(error);
     }
   }
 
-  async updatePost(req: Request, res: Response): Promise<void> {
+  async updatePost(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const postId = req.params.id as string;
+      const postId = Number(req.params.id);
       const updatedPost = await newsService.update(postId, req.body);
       
       if (!updatedPost) {
@@ -54,13 +49,13 @@ export class NewsController {
       }
       res.json(updatedPost);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      next(error);
     }
   }
 
-  async deletePost(req: Request, res: Response): Promise<void> {
+  async deletePost(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const postId = req.params.id as string;
+      const postId = Number(req.params.id);
       const success = await newsService.delete(postId);
       
       if (!success) {
@@ -69,7 +64,15 @@ export class NewsController {
       }
       res.sendStatus(200);
     } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      next(error);
+    }
+  }
+
+  async triggerError(_req: Request, _res: Response, next: NextFunction): Promise<void> {
+    try {
+      await newsService.throwServiceError();
+    } catch (error) {
+      next(error);
     }
   }
 }

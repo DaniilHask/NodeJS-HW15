@@ -1,4 +1,4 @@
-import fileDB, { type NewsPost, type NewsInput } from '../fileDB.js';
+import fileDB, { type NewsPost, type NewsInput } from "../fileDB.js";
 
 export interface PaginationParams {
   page?: number;
@@ -24,19 +24,19 @@ export class NewsportsRepository {
     };
   }
 
-  async getById(id: string): Promise<NewsPost | null> {
+  async getById(id: number): Promise<NewsPost | null> {
     return await fileDB.getItemById(id);
   }
 
-  async create(data: { title: string; text: string }): Promise<NewsPost> {
+  async create(data: Omit<NewsPost, "id">): Promise<NewsPost> {
     return await fileDB.addItem(data);
   }
 
-  async update(id: string, update: NewsInput): Promise<NewsPost | null> {
+  async update(id: number, update: NewsInput): Promise<NewsPost | null> {
     return await fileDB.updateItem(id, update);
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: number): Promise<boolean> {
     return await fileDB.deleteItem(id);
   }
 }

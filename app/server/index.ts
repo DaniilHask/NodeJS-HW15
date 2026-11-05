@@ -2,9 +2,13 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import './config/passport.js';
+import authRouter from './routes/auth.routes.js';
 // @ts-ignore
 import next from 'next';
 import newsRoutes from './routes/news.routes.js';
+import { requestLogger } from './middleware/logger.middleware.js';
+import { errorHandler } from './middleware/error.middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,11 +26,16 @@ app.prepare().then(() => {
 
   server.use(express.json());
 
+  server.use(requestLogger);
+
+  server.use('/auth', authRouter);
   server.use('/api', newsRoutes);
 
- server.all(/(.*)/, (req: Request, res: Response) => {
-  return handle(req, res);
-});
+  server.all(/(.*)/, (req: Request, res: Response) => {
+    return handle(req, res);
+  });
+
+  server.use(errorHandler);
 
   server.listen(PORT, () => {
     console.log(`> Ready on http://localhost:${PORT}`);
