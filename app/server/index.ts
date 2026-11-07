@@ -11,7 +11,7 @@ import next from 'next';
 import newsRoutes from './routes/news.routes.js';
 import { requestLogger } from './middleware/logger.middleware.js';
 import { errorHandler } from './middleware/error.middleware.js';
-import { AppDataSource } from './data-source.js'
+import { AppDataSource } from './data-source.migrations.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,4 +1,4 @@
-import { AppDataSource } from '../data-source.js';
+import { AppDataSource } from '../data-source.migrations.js';
 import { Newspost } from '../entities/Newspost.js';
 import type { User } from '../entities/User.js';
 

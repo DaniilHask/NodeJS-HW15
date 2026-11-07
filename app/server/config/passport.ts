@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { AppDataSource } from '../data-source.js';
+import { AppDataSource } from '../data-source.migrations.js';
 import { User } from '../entities/User.js';
 
 const JWT_SECRET = 'my_super_secret_key_999';

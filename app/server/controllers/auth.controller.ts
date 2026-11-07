@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AppDataSource } from '../data-source.js';
+import { AppDataSource } from '../data-source.migrations.js';
 import { User } from '../entities/User.js';
 import { JWT_SECRET } from '../config/passport.js';
 

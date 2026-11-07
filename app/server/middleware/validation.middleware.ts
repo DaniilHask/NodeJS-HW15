@@ -5,7 +5,7 @@ import { ValidationError } from '../errors/errors.handler.js';
 const v = new (Validator as any)();
 
 const createSchema = {
-  title: { type: 'string', max: 50, empty: false },
+  header: { type: 'string', max: 50, empty: false },
   text: { type: 'string', max: 256, empty: false },
   genre: { type: 'enum', values: ['Politic', 'Business', 'Sport', 'Other'] },
   isPrivate: { type: 'boolean' },
@@ -14,7 +14,7 @@ const createSchema = {
 };
 
 const updateSchema = {
-  title: { type: 'string', max: 50, optional: true, empty: false },
+  header: { type: 'string', max: 50, optional: true, empty: false },
   text: { type: 'string', max: 256, optional: true, empty: false },
   genre: { type: 'enum', values: ['Politic', 'Business', 'Sport', 'Other'], optional: true },
   isPrivate: { type: 'boolean', optional: true },

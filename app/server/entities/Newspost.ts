@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn, Index } from 'typeorm';
 import { User } from './User.js';
 
 @Entity('newsposts')
@@ -8,7 +8,11 @@ export class Newspost {
   id!: number;
 
   @Column({ type: 'varchar' })
-  title!: string;
+  header!: string;
+
+  @Column({ type: 'boolean', default: false })
+  @Index()
+  deleted!: boolean;
 
   @Column({ type: 'text' })
   text!: string;
@@ -27,5 +31,6 @@ export class Newspost {
   author!: User;
 
   @Column({ type: 'int' })
+  @Index()
   authorId!: number;
 }

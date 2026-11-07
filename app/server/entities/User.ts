@@ -1,8 +1,9 @@
 import 'reflect-metadata';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Index } from 'typeorm';
 import { Newspost } from './Newspost.js';
 
 @Entity('users')
+@Index(['email'])
 export class User {
   @PrimaryGeneratedColumn({ type: 'int' })
   id!: number;
