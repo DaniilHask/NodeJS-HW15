@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import userDB from '../userDB.js';
+import { AppDataSource } from '../data-source.js';
+import { User } from '../entities/User.js';
 
 const JWT_SECRET = 'my_super_secret_key_999';
 const options = {
@@ -11,7 +12,11 @@ const options = {
 passport.use(
   new JwtStrategy(options, async (jwtPayload, done) => {
     try {
-      const user = await userDB.getUserByEmail(jwtPayload.email);
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({
+        where: { email: jwtPayload.email },
+      });
+
       if (user) {
         return done(null, user);
       }
@@ -19,7 +24,7 @@ passport.use(
     } catch (error) {
       return done(error, false);
     }
-  }
-));
+  })
+);
 
 export { JWT_SECRET };

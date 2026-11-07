@@ -1,7 +1,8 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import userDB from '../userDB.js';
+import { AppDataSource } from '../data-source.js';
+import { User } from '../entities/User.js';
 import { JWT_SECRET } from '../config/passport.js';
 
 class AuthController {
@@ -19,7 +20,9 @@ class AuthController {
         return res.status(400).json({ error: 'Passwords do not match' });
       }
 
-      const existingUser = await userDB.getUserByEmail(email);
+      const userRepository = AppDataSource.getRepository(User);
+
+      const existingUser = await userRepository.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ error: 'User with this email already exists' });
       }
@@ -27,7 +30,12 @@ class AuthController {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      await userDB.addUser({ email, password: hashedPassword });
+      const newUser = userRepository.create({
+        email,
+        password: hashedPassword,
+      });
+
+      await userRepository.save(newUser);
 
       const tokenPayload = { email };
       const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
@@ -46,7 +54,9 @@ class AuthController {
         return res.status(400).json({ error: 'Email and password are required' });
       }
 
-      const user = await userDB.getUserByEmail(email);
+      const userRepository = AppDataSource.getRepository(User);
+      const user = await userRepository.findOne({ where: { email } });
+      
       if (!user) {
         return res.status(401).json({ error: 'Invalid email or password' });
       }
@@ -74,7 +84,6 @@ class AuthController {
     return res.json({
       id: user.id,
       email: user.email,
-      createDate: user.createDate
     });
   }
 }

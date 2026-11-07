@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import type { Request, Response } from 'express';
 import path from 'path';
@@ -9,6 +11,7 @@ import next from 'next';
 import newsRoutes from './routes/news.routes.js';
 import { requestLogger } from './middleware/logger.middleware.js';
 import { errorHandler } from './middleware/error.middleware.js';
+import { AppDataSource } from './data-source.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,23 +24,32 @@ const handle = app.getRequestHandler();
 
 const PORT = Number(process.env.PORT) || 8000;
 
-app.prepare().then(() => {
-  const server = express();
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Connected to PostgreSQL database successfully');
+    return app.prepare();
+  })
+  .then(() => {
+    const server = express();
 
-  server.use(express.json());
+    server.use(express.json());
 
-  server.use(requestLogger);
+    server.use(requestLogger);
 
-  server.use('/auth', authRouter);
-  server.use('/api', newsRoutes);
+    server.use('/auth', authRouter);
+    server.use('/api', newsRoutes);
 
-  server.all(/(.*)/, (req: Request, res: Response) => {
-    return handle(req, res);
+    server.all(/(.*)/, (req: Request, res: Response) => {
+      return handle(req, res);
+    });
+
+    server.use(errorHandler);
+
+    server.listen(PORT, () => {
+      console.log(`> Ready on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error during application initialization:', error);
+    process.exit(1);
   });
-
-  server.use(errorHandler);
-
-  server.listen(PORT, () => {
-    console.log(`> Ready on http://localhost:${PORT}`);
-  });
-});

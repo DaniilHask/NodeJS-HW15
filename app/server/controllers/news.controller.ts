@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import newsService from '../services/news.service.js';
+import type { User } from '../entities/User.js';
 
 export class NewsController {
   async getPosts(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -31,7 +32,14 @@ export class NewsController {
 
   async createPost(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const newPost = await newsService.create(req.body);
+      const currentUser = (req as any).user as User;
+
+      if (!currentUser) {
+        res.status(401).json({ error: 'Unauthorized: User not found in request' });
+        return;
+      }
+
+      const newPost = await newsService.create(req.body, currentUser);
       res.status(201).json(newPost);
     } catch (error) {
       next(error);
