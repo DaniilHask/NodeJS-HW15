@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --exec tsx index.ts",
     "start": "tsx index.ts",
-
+    "build": "tsc",
+    
     "typeorm": "tsx ./node_modules/typeorm/cli.js -d data-source.migrations.ts",
     "migration:generate": "npm run typeorm migration:generate --",
     "migration:run": "npm run typeorm migration:run",

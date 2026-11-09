@@ -1,0 +1,36 @@
+name: CI for News Service
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Server Dependencies
+        run: npm ci
+        working-directory: ./server
+
+      - name: Build Server TypeScript
+        run: npm run build
+        working-directory: ./server
+
+      - name: Install Client Dependencies
+        run: npm ci
+        working-directory: ./app/client/client
+
+      - name: Build Client (Next.js)
+        run: npm run build
+        working-directory: ./app/client/client
