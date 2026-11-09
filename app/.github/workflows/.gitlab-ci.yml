@@ -1,0 +1,23 @@
+stages:
+  - build
+
+variables:
+  NODE_VERSION: "20"
+
+# Задача 1: Собираем бэкенд
+build_server:
+  stage: build
+  image: node:${NODE_VERSION}
+  script:
+    - cd app/server      # Если папка лежит просто в корне, смените на "cd server"
+    - npm ci
+    - npm run build
+
+# Задача 2: Собираем фронтенд
+build_client:
+  stage: build
+  image: node:${NODE_VERSION}
+  script:
+    - cd app/client/client # Если папка лежит в другом месте, поправьте путь
+    - npm ci
+    - npm run build
