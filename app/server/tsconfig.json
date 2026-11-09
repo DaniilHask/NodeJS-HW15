@@ -6,7 +6,7 @@
     "target": "esnext",
     "lib": ["esnext"],
     "types": ["node"],
-
+    "outDir": "./dist",
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
