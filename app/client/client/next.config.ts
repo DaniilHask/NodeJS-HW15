@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  output: 'export',
   reactCompiler: true,
   turbopack: {
     rules: {
