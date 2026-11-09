@@ -10,7 +10,6 @@ cache:
     - app/server/node_modules/
     - app/client/client/node_modules/
 
-# --- ЭТАП 1: CI (Сборка бэкенда и фронтенда) ---
 build_server:
   stage: build
   image: node:${NODE_VERSION}
