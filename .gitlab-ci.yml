@@ -6,23 +6,21 @@ variables:
 
 cache:
   paths:
-    - server/node_modules/
-    - client/client/node_modules/
+    - app/server/node_modules/
+    - app/client/client/node_modules/
 
-# Сборка и проверка бэкенда
 build_server:
   stage: build
   image: node:${NODE_VERSION}
   script:
-    - cd server
+    - cd app/server
     - npm ci
     - npm run build
 
-# Сборка и проверка фронтенда
 build_client:
   stage: build
   image: node:${NODE_VERSION}
   script:
-    - cd client/client
+    - cd app/client/client
     - npm ci
     - npm run build
