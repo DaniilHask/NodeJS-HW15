@@ -1,15 +1,17 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import * as dotenv from 'dotenv';
 import { User } from './entities/User.js';
 import { Newspost } from './entities/Newspost.js';
 
+dotenv.config();
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: '127.0.0.1',
-  port: 5433,
-  username: 'postgres',
-  password: 'secretpassword',
-  database: 'mydb',
+  url: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
   synchronize: false,
   logging: true,
   entities: [User, Newspost],
