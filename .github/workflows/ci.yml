@@ -10,28 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          node-version: '20'
 
-      - name: Build Server
+      - name: Install and Build Server
         run: |
           cd app/server
-          npm install
+          npm ci
           npm run build
 
-      - name: Build Client
+      - name: Install and Build Client
         run: |
           cd app/client/client
-          npm install
+          npm ci
           npm run build
