@@ -13,12 +13,14 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const endpoint = isLogin ? '/auth/login' : '/auth/register';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const endpoint = isLogin ? `${apiUrl}/auth/login` : `${apiUrl}/auth/register`;
+    
     const body = isLogin 
       ? { email, password } 
       : { email, password, confirmPassword };
