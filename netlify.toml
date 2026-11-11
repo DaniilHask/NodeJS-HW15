@@ -1,9 +1,10 @@
 [build]
   base = "app/client/client"
+  publish = "app/client/client/.next"
   command = "npm run build"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
